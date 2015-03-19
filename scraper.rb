@@ -3,7 +3,7 @@ require 'nokogiri'
 require 'open-uri'
 
 data = Nokogiri.parse(open('http://www.olgr.nsw.gov.au/liquor_applications/xml/application%20noticeboard%20data.xml').read, nil, 'utf-8')
-info_url = 'http://www.olgr.nsw.gov.au/application_noticeboard.asp'
+info_url = 'http://www.ilga.nsw.gov.au/liquor/application-noticeboard'
 
 data.search('APP').each do |a|
   # Some dates are so mangled that we have to skip the record
