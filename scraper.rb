@@ -2,11 +2,10 @@ require 'scraperwiki'
 require 'nokogiri'
 require 'open-uri'
 
-date_from = 1.days.ago.strftime("%Y-%m-%d")
-date_to   = 0.days.ago.strftime("%Y-%m-%d")
+date_from = (Time.now - 7*86400).strftime("%Y-%m-%d")
+date_to   = (Time.now - 1*86400).strftime("%Y-%m-%d")
 
-query_url = 'https://www.liquorandgaming.justice.nsw.gov.au/_api/search/query?querytext=%27%28%20NoticeboardDatePosted:{date_from}..{date_to}%29%20ContentSource:Notices%27&rowlimit=4000&selectproperties=%27NoticeboardApplicationNumber,NoticeboardApplicationType,NoticeboardCIS,NoticeboardDatePosted,NoticeboardDatePostedString,NoticeboardLGA,NoticeboardLIA,NoticeboardLPN,NoticeboardNotice,NoticeboardPostcode,NoticeboardPLN,NoticeboardSubmissionDate,NoticeboardSubmissionDateString,NoticeboardStreetAddress,NoticeboardSuburb,NoticeboardStatus,NoticeboardRST%27&sortlist=%27NoticeboardDatePosted:descending%27&QueryTemplatePropertiesUrl=%27spfile://webroot/queryparametertemplate.xml%27'
-
+query_url = "https://www.liquorandgaming.justice.nsw.gov.au/_api/search/query?querytext=%27%28%20NoticeboardDatePosted:#{date_from}..#{date_to}%29%20ContentSource:Notices%27&rowlimit=4000&selectproperties=%27NoticeboardApplicationNumber,NoticeboardApplicationType,NoticeboardCIS,NoticeboardDatePosted,NoticeboardDatePostedString,NoticeboardLGA,NoticeboardLIA,NoticeboardLPN,NoticeboardNotice,NoticeboardPostcode,NoticeboardPLN,NoticeboardSubmissionDate,NoticeboardSubmissionDateString,NoticeboardStreetAddress,NoticeboardSuburb,NoticeboardStatus,NoticeboardRST%27&sortlist=%27NoticeboardDatePosted:descending%27&QueryTemplatePropertiesUrl=%27spfile://webroot/queryparametertemplate.xml%27"
 
 data = Nokogiri.parse(open(query_url).read, nil, 'utf-8')
 cleaned_records = []
