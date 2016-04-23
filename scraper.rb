@@ -19,10 +19,11 @@ records.each do |record|
 end
 
 cleaned_records.each do |cleaned_record|
+  council_reference = cleaned_record["NoticeboardApplicationNumber"]
   address = "#{cleaned_record["NoticeboardStreetAddress"]}, #{cleaned_record["NoticeboardSuburb"]}, NSW"
   description = "#{cleaned_record["NoticeboardApplicationType"]} by #{cleaned_record["NoticeboardLPN"]}"
-  date_posted = DateTime.strptime(cleaned_record["NoticeboardDatePosted"])
-  on_notice_to = DateTime.strptime(cleaned_record["NoticeboardSubmissionDate"])
+  date_posted = DateTime.parse(cleaned_record["NoticeboardDatePosted"])
+  on_notice_to = DateTime.parse(cleaned_record["NoticeboardSubmissionDate"])
 
   info_url = "http://www.lgnoticeboardassets.justice.nsw.gov.au/liquor_applications/docs/#{council_reference}-Notice.pdf"
 
@@ -39,7 +40,7 @@ cleaned_records.each do |cleaned_record|
   comment_url += "&su=#{URI.encode cleaned_record["NoticeboardSuburb"]}" #RANDWICK"
 
   record = {
-    'council_reference' => cleaned_record["NoticeboardApplicationNumber"],
+    'council_reference' => council_reference,
     'description'       => description,
     'date_received'     => date_posted,
     'address'           => address,
