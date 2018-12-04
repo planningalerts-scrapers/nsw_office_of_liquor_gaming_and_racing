@@ -25,9 +25,9 @@ cleaned_records.each do |cleaned_record|
   date_posted = DateTime.parse(cleaned_record["NoticeboardDatePosted"])
   on_notice_to = DateTime.parse(cleaned_record["NoticeboardSubmissionDate"])
 
-  info_url = "http://www.lgnoticeboardassets.justice.nsw.gov.au/liquor_applications/docs/#{council_reference}-Notice.pdf"
+  info_url = "https://www.lgnoticeboardassets.justice.nsw.gov.au/liquor_applications/docs/#{council_reference}-Notice.pdf"
 
-  comment_url = "http://www.liquorandgaming.justice.nsw.gov.au/pages/lg-forms/submissionform.aspx?"
+  comment_url = "https://www.liquorandgaming.justice.nsw.gov.au/pages/lg-forms/submissionform.aspx?"
   comment_url += "an=#{council_reference}"
   comment_url += "&at=#{URI.encode cleaned_record["NoticeboardApplicationType"]}"
   comment_url += "&dp=#{URI.encode cleaned_record["NoticeboardDatePostedString"]}" 
