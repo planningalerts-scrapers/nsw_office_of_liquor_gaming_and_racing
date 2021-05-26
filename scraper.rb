@@ -6,6 +6,10 @@ url = "https://lngnoticeboard.onegov.nsw.gov.au/lngnoticeboard/v1/applicationsea
 end_date = Date.today
 start_date = end_date - 28
 
+def convert_date(text)
+  Date.strptime(text, "%d/%m/%Y").to_s
+end
+
 query = {
   "paginationCriteria": {
     "currentPage": 1,
@@ -23,8 +27,24 @@ query = {
   ]
 }
 
-pp HTTParty.post(
+result = HTTParty.post(
   url,
   body: query.to_json,
   headers: {"Content-Type" => "application/json"}
 )
+
+result["results"].each do |application|
+  council_reference = application["application"]
+  record = {
+    "council_reference" => council_reference,
+    "address" => application["address"],
+    "description" => application["type"],
+    "info_url" => "https://lngnoticeboard.onegov.nsw.gov.au/searchresult/details/#{council_reference}",
+    "date_scraped" => Date.today.to_s,
+    "date_received" => convert_date(application["posted"]),
+    "on_notice_to" => convert_date(application["submissionClose"]),
+    "latitude" => application["latitude"],
+    "longitude" => application["longitude"]
+  }
+  pp record
+end
