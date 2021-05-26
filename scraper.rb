@@ -1,4 +1,5 @@
 require "httparty"
+require "scraperwiki"
 
 def convert_date(text)
   Date.strptime(text, "%d/%m/%Y").to_s
@@ -58,6 +59,7 @@ def all(start_date, end_date)
 end
 
 # Get the applications from the last 28 days
-all(Date.today - 28, Date.today) do |application|
-  pp application
+all(Date.today - 28, Date.today) do |record|
+  puts "Saving #{record['council_reference']}..."
+  ScraperWiki.save_sqlite(["council_reference"], record)
 end
