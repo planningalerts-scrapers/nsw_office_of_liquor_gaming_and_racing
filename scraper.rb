@@ -5,11 +5,11 @@ def convert_date(text)
   Date.strptime(text, "%d/%m/%Y").to_s
 end
 
-# Gets one page worth of application data
-def page(current_page, start_date, end_date)
+# Create the search and return its ID
+def setup_search(start_date, end_date)
   query = {
     "paginationCriteria": {
-      "currentPage": current_page,
+      "currentPage": 1,
       "pageSize": 25
     },
     "type": "Advanced",
@@ -30,6 +30,16 @@ def page(current_page, start_date, end_date)
     headers: {"Content-Type" => "application/json"}
   )
 
+  # Search ID needs to be a string for a later api call. So might as well make it so here
+  result["searchID"].to_s
+end
+
+def page(page, search_id)
+  result = HTTParty.post(
+    "https://lngnoticeboard.onegov.nsw.gov.au/lngnoticeboard/v1/applicationsearch/page",
+    body: {"searchID": search_id, "page": page}.to_json,
+    headers: {"Content-Type" => "application/json"}
+  )
   result["results"].each do |application|
     council_reference = application["application"]
     yield(
@@ -48,13 +58,17 @@ def page(current_page, start_date, end_date)
 end
 
 def all(start_date, end_date)
-  current_page = 1
+  puts "Setting up search"
+  search_id = setup_search(start_date, end_date)
+
+  page = 1
   loop do
-    page_count = page(current_page, start_date, end_date) do |application|
+    puts "Getting page: #{page}"
+    page_count = page(page, search_id) do |application|
       yield application
     end
-    current_page += 1
-    break if current_page > page_count
+    page += 1
+    break if page > page_count
   end
 end
 
