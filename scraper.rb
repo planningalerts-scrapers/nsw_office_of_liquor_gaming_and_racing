@@ -29,7 +29,7 @@ def page(current_page, start_date, end_date)
     headers: {"Content-Type" => "application/json"}
   )
 
-  result["results"].map do |application|
+  applications = result["results"].map do |application|
     council_reference = application["application"]
     {
       "council_reference" => council_reference,
@@ -43,7 +43,14 @@ def page(current_page, start_date, end_date)
       "longitude" => application["longitude"]
     }
   end
+  { page_count: result["pageCount"], applications: applications }
 end
 
-# Get the applications from the last 28 days
-pp page(1, Date.today - 28, Date.today)
+current_page = 1
+loop do
+  # Get the applications from the last 28 days
+  result = page(current_page, Date.today - 28, Date.today)
+  pp result[:applications]
+  current_page += 1
+  break if current_page > result[:page_count]
+end
