@@ -29,9 +29,9 @@ def page(current_page, start_date, end_date)
     headers: {"Content-Type" => "application/json"}
   )
 
-  applications =result["results"].map do |application|
+  result["results"].each do |application|
     council_reference = application["application"]
-    {
+    yield(
       "council_reference" => council_reference,
       "address" => application["address"],
       "description" => application["type"],
@@ -41,20 +41,19 @@ def page(current_page, start_date, end_date)
       "on_notice_to" => convert_date(application["submissionClose"]),
       "latitude" => application["latitude"],
       "longitude" => application["longitude"]
-    }
+    )
   end
-  { page_count: result["pageCount"], applications: applications }
+  result["pageCount"]
 end
 
 def all(start_date, end_date)
   current_page = 1
   loop do
-    result = page(current_page, start_date, end_date)
-    result[:applications].each do |application|
+    page_count = page(current_page, start_date, end_date) do |application|
       yield application
     end
     current_page += 1
-    break if current_page > result[:page_count]
+    break if current_page > page_count
   end
 end
 
