@@ -63,7 +63,6 @@ def all(start_date, end_date)
 
   page = 1
   loop do
-    puts "Getting page: #{page}"
     page_count = page(page, search_id) do |application|
       yield application
     end
