@@ -29,7 +29,7 @@ def page(current_page, start_date, end_date)
     headers: {"Content-Type" => "application/json"}
   )
 
-  applications = result["results"].map do |application|
+  applications =result["results"].map do |application|
     council_reference = application["application"]
     {
       "council_reference" => council_reference,
@@ -46,11 +46,19 @@ def page(current_page, start_date, end_date)
   { page_count: result["pageCount"], applications: applications }
 end
 
-current_page = 1
-loop do
-  # Get the applications from the last 28 days
-  result = page(current_page, Date.today - 28, Date.today)
-  pp result[:applications]
-  current_page += 1
-  break if current_page > result[:page_count]
+def all(start_date, end_date)
+  current_page = 1
+  loop do
+    result = page(current_page, start_date, end_date)
+    result[:applications].each do |application|
+      yield application
+    end
+    current_page += 1
+    break if current_page > result[:page_count]
+  end
+end
+
+# Get the applications from the last 28 days
+all(Date.today - 28, Date.today) do |application|
+  pp application
 end
