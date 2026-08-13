@@ -31,10 +31,13 @@ class Scraper
 
   # Get the applications from the last 28 days
   def run
+    count = 0
     scrape(Date.today - SEARCH_WINDOW_DAYS, Date.today) do |record|
       puts "Saving #{record['council_reference']}..."
       ScraperWiki.save_sqlite(["council_reference"], record)
+      count += 1
     end
+    puts "Finished - added #{count} records."
   end
 
   private
